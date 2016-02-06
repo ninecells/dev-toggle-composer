@@ -1,0 +1,13 @@
+{
+  "name": "ninecells/dev-toggle-composer",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.5.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "NineCells\\Dev\\ToggleComposer\\": ""
+    }
+  },
+  "minimum-stability": "dev"
+}
