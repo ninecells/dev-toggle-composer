@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+$composer_json = file_get_contents('composer.json');
+$json_obj = json_decode($composer_json, true);
+
+$dev_mode = isset($json_obj['repositories']);
+
+if ($dev_mode) {
+    unset($json_obj['repositories']);
+    file_put_contents('composer.json', json_encode($json_obj, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    echo "이제 배포 모드 입니다.\n";
+} else {
+    file_put_contents('composer.json', file_get_contents('composer_dev.json'));
+    echo "이제 개발 모드 입니다.\n";
+}
