@@ -1,6 +1,16 @@
 #!/usr/bin/env php
 <?php
 
+if ( !file_exists ('composer.json') ) {
+    echo "composer.json 파일이 존재하지 않습니다.\n";
+    exit();
+}
+
+if ( !file_exists ('composer_dev.json') ) {
+    echo "composer_dev.json 파일이 존재하지 않습니다.\n";
+    exit();
+}
+
 $composer_json = file_get_contents('composer.json');
 $json_obj = json_decode($composer_json, true);
 
