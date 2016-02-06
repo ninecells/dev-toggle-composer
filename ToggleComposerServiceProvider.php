@@ -5,7 +5,7 @@ namespace NineCells\Dev\ToggleComposer;
 use Illuminate\Support\ServiceProvider;
 use NineCells\Dev\ToggleComposer\Console\ToggleComposerCommand;
 
-class SimpleBoardServiceProvider extends ServiceProvider
+class ToggleComposerServiceProvider extends ServiceProvider
 {
     public function register()
     {
