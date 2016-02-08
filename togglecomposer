@@ -6,8 +6,8 @@ if ( !file_exists ('composer.json') ) {
     exit();
 }
 
-if ( !file_exists ('composer_dev.json') ) {
-    echo "composer_dev.json 파일이 존재하지 않습니다.\n";
+if ( !file_exists ('composer.dev') ) {
+    echo "composer.dev 파일이 존재하지 않습니다.\n";
     exit();
 }
 
@@ -21,6 +21,6 @@ if ($dev_mode) {
     file_put_contents('composer.json', json_encode($json_obj, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     echo "이제 배포 모드 입니다.\n";
 } else {
-    file_put_contents('composer.json', file_get_contents('composer_dev.json'));
+    file_put_contents('composer.json', file_get_contents('composer.dev'));
     echo "이제 개발 모드 입니다.\n";
 }
