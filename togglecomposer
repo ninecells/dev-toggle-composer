@@ -56,7 +56,7 @@ function remove_repos_without_keep_mark(&$json)
     $new_repos = [];
     $repos = $json['repositories'];
     foreach ($repos as $repo) {
-        if (isset($repo['keep']) && $repo['keep'] == true) {
+        if (isset($repo['keep']) && $repo['keep'] === true) {
             array_push($new_repos, $repo);
         }
     }
@@ -70,7 +70,7 @@ function remove_keep_mark(&$json)
     }
     $repos = &$json['repositories'];
     foreach ($repos as &$repo) {
-        if (isset($repo['keep']) && $repo['keep'] == true) {
+        if (isset($repo['keep'])) {
             unset($repo['keep']);
         }
     }
