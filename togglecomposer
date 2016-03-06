@@ -1,26 +1,77 @@
 #!/usr/bin/env php
 <?php
 
-if ( !file_exists ('composer.json') ) {
+if (!file_exists('composer.json')) {
     echo "composer.json 파일이 존재하지 않습니다.\n";
     exit();
 }
 
-if ( !file_exists ('composer.dev') ) {
+if (!file_exists('composer.dev')) {
     echo "composer.dev 파일이 존재하지 않습니다.\n";
     exit();
 }
 
-$composer_json = file_get_contents('composer.json');
-$json_obj = json_decode($composer_json, true);
-
-$dev_mode = isset($json_obj['repositories']);
+$composer_json = read_json_str('composer.json');
+$composer_dev = read_json_str('composer.dev');
+$dev_mode = ($composer_json == $composer_dev);
 
 if ($dev_mode) {
-    unset($json_obj['repositories']);
-    file_put_contents('composer.json', json_encode($json_obj, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    $json = read_json('composer.dev', false);
+    remove_repos_without_keep_mark($json);
+    remove_keep_mark($json);
+    write_json($json, 'composer.json');
     echo "이제 배포 모드 입니다.\n";
 } else {
-    file_put_contents('composer.json', file_get_contents('composer.dev'));
+    $json = read_json('composer.dev');
+    write_json($json, 'composer.json');
     echo "이제 개발 모드 입니다.\n";
+}
+
+function read_json($file, $rm_keep_mark = true)
+{
+    $contents = file_get_contents($file);
+    $json = json_decode($contents, true);
+    if ($rm_keep_mark) {
+        remove_keep_mark($json);
+    }
+    return $json;
+}
+
+function read_json_str($file, $rm_keep_mark = true)
+{
+    $json = read_json($file, $rm_keep_mark);
+    return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+}
+
+function write_json($json, $file)
+{
+    file_put_contents($file, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+}
+
+function remove_repos_without_keep_mark(&$json)
+{
+    if (!isset($json['repositories'])) {
+        return;
+    }
+    $new_repos = [];
+    $repos = $json['repositories'];
+    foreach ($repos as $repo) {
+        if (isset($repo['keep']) && $repo['keep'] == true) {
+            array_push($new_repos, $repo);
+        }
+    }
+    $json['repositories'] = $new_repos;
+}
+
+function remove_keep_mark(&$json)
+{
+    if (!isset($json['repositories'])) {
+        return;
+    }
+    $repos = &$json['repositories'];
+    foreach ($repos as &$repo) {
+        if (isset($repo['keep']) && $repo['keep'] == true) {
+            unset($repo['keep']);
+        }
+    }
 }
