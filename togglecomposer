@@ -11,36 +11,38 @@ if (!file_exists('composer.dev')) {
     exit();
 }
 
-$composer_json = read_json_str('composer.json');
-$composer_dev = read_json_str('composer.dev');
+$composer_json = read_json_str('composer.json', true, false);
+$composer_dev = read_json_str('composer.dev', true, true);
 $dev_mode = ($composer_json == $composer_dev);
 
 if ($dev_mode) {
-    $json = read_json('composer.dev', false);
+    $json = read_json('composer.dev', false, false);
     remove_repos_without_keep_mark($json);
     remove_keep_mark($json);
     write_json($json, 'composer.json');
     echo "이제 배포 모드 입니다.\n";
 } else {
-    $json = read_json('composer.dev');
-    $json['minimum-stability'] = 'dev';
+    $json = read_json('composer.dev', true, true);
     write_json($json, 'composer.json');
     echo "이제 개발 모드 입니다.\n";
 }
 
-function read_json($file, $rm_keep_mark = true)
+function read_json($file, $rm_keep_mark, $add_minimum_stability_dev)
 {
     $contents = file_get_contents($file);
     $json = json_decode($contents, true);
     if ($rm_keep_mark) {
         remove_keep_mark($json);
     }
+    if ($add_minimum_stability_dev) {
+        $json['minimum-stability'] = 'dev';
+    }
     return $json;
 }
 
-function read_json_str($file, $rm_keep_mark = true)
+function read_json_str($file, $rm_keep_mark, $add_minimum_stability_dev)
 {
-    $json = read_json($file, $rm_keep_mark);
+    $json = read_json($file, $rm_keep_mark, $add_minimum_stability_dev);
     return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 }
 
