@@ -23,6 +23,7 @@ if ($dev_mode) {
     echo "이제 배포 모드 입니다.\n";
 } else {
     $json = read_json('composer.dev');
+    $json['minimum-stability'] = 'dev';
     write_json($json, 'composer.json');
     echo "이제 개발 모드 입니다.\n";
 }
